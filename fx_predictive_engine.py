@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import accuracy_score, classification_report
 import warnings
+import matplotlib.pyplot as plt
 
 # Suppress HMMlearn deprecation warnings for cleaner output
 warnings.filterwarnings("ignore")
@@ -132,6 +133,42 @@ class FXPredictiveEngine:
         print(f"Annualized Volatility:       {annualized_vol:.2%}")
         print(f"Sharpe Ratio:                {sharpe_ratio:.2f}")
         print(f"Maximum Drawdown:            {max_drawdown:.2%}")
+
+    def visualize_results(self):
+        """Generates institutional-grade visualizations of regimes and performance."""
+        print("Generating visualizations...")
+        
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 10), gridspec_kw={'height_ratios': [2, 1.5, 1]})
+        fig.suptitle(f"FX Meta-Labeling & Regime Detection ({self.pair})", fontsize=16)
+
+        # 1. Price Chart with Regime Backgrounds
+        ax1.plot(self.data.index, self.data['Close'], color='black', linewidth=1, label='Close Price')
+        ax1.fill_between(self.data.index, self.data['Close'].min(), self.data['Close'].max(), 
+                         where=self.data['Regime']==1, color='red', alpha=0.1, transform=ax1.get_xaxis_transform(), label='Regime 1 (e.g., High Vol)')
+        ax1.fill_between(self.data.index, self.data['Close'].min(), self.data['Close'].max(), 
+                         where=self.data['Regime']==0, color='blue', alpha=0.1, transform=ax1.get_xaxis_transform(), label='Regime 0 (e.g., Low Vol)')
+        ax1.set_title("Price Action & HMM Market Regimes")
+        ax1.set_ylabel("Exchange Rate")
+        ax1.legend(loc='upper left')
+
+        # 2. Cumulative Returns
+        ax2.plot(self.data.index, self.data['Cum_Market'] - 1, label='Buy & Hold Baseline', color='gray', linestyle='--')
+        ax2.plot(self.data.index, self.data['Cum_Strategy'] - 1, label='Meta-Labeled Strategy', color='green', linewidth=1.5)
+        ax2.set_title("Cumulative Returns")
+        ax2.set_ylabel("Return")
+        ax2.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: '{:.0%}'.format(y)))
+        ax2.legend(loc='upper left')
+
+        # 3. Drawdowns
+        rolling_max = self.data['Cum_Strategy'].cummax()
+        drawdown = self.data['Cum_Strategy'] / rolling_max - 1
+        ax3.fill_between(self.data.index, drawdown, 0, color='darkred', alpha=0.5)
+        ax3.set_title("Strategy Drawdown")
+        ax3.set_ylabel("Drawdown Depth")
+        ax3.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: '{:.0%}'.format(y)))
+
+        plt.tight_layout()
+        plt.show()
 
 if __name__ == "__main__":
     # Test on EUR/USD FX Pair
