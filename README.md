@@ -11,3 +11,8 @@ This repository contains production-grade Python implementations of quantitative
 * **Cornish-Fisher Expansion:** Adjusts Value at Risk (VaR) and Expected Shortfall (CVaR) quantiles for non-normal skewness and leptokurtic tails (fat tails).
 * **Asymmetric Volatility Forecasting:** Calibrated EGARCH (Exponential GARCH) time-series models with Student-T distributions to capture the 'leverage effect' in equity market drawdowns.
 * **Model Validation & Backtesting:** Implemented Kupiec's Proportion of Failures (POF) Likelihood Ratio test to statistically validate VaR model accuracy against historical actuals.
+
+### 3. FX Predictive Engine (Regime Detection & Meta-Labeling)
+* **Hidden Markov Models (HMM):** Calibrated Gaussian HMMs to detect latent market regimes (Trending vs. Ranging) using non-stationary volatility and return distributions.
+* **Meta-Labeling ML Architecture:** Engineered a Random Forest classifier to filter false-positive trading signals using Time-Series walk-forward cross-validation, strictly preventing data leakage.
+* **Algorithmic Backtesting:** Evaluated signal efficacy, generating strategy Sharpe Ratios and Max Drawdown metrics against buy-and-hold FX benchmarks.
