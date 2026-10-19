@@ -179,3 +179,5 @@ if __name__ == "__main__":
     fx_engine.primary_trading_model()
     fx_engine.meta_labeling_and_prediction()
     fx_engine.backtest_strategy()
+    fx_engine.visualize_results()
+    
